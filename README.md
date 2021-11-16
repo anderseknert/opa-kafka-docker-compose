@@ -4,9 +4,10 @@ Example code for running Kafka with client certificates for authentication, and 
 
 ## Setup
 
-* Copy an OPA configuration file (`opa-conf.yaml`) into the `opa` directory.
-* Copy the [OPA Kafka Authorizer Plugin](https://github.com/anderseknert/opa-kafka-plugin) into the `plugin` directory.
-* Run the `create_cert.sh` script to create server and client certificates. These will be found in the `cert` directory.
+1. Copy an OPA configuration file (`opa-conf.yaml`) into the `opa` directory.
+2. Copy the [OPA Kafka Authorizer Plugin](https://github.com/anderseknert/opa-kafka-plugin) into the `plugin` directory.
+3. Run the `create_cert.sh` script to create server and client certificates. These will be found in the `cert` directory.
+4. `docker compose up`
 
 ## Querying Kafka
 
