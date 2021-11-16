@@ -20,21 +20,29 @@ services:
     image: confluentinc/cp-kafka:6.2.1
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       CLASSPATH: "/plugin/*"
       KAFKA_AUTHORIZER_CLASS_NAME: com.bisnode.kafka.authorization.OpaAuthorizer
       KAFKA_OPA_AUTHORIZER_URL: http://opa:8181/v1/data/kafka/authz/allow
+      KAFKA_OPA_AUTHORIZER_CACHE_EXPIRE_AFTER_SECONDS: 10 # For development only
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,SSL://localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_SSL_KEYSTORE_FILENAME: server.keystore
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: credentials.txt
+      KAFKA_SSL_KEY_CREDENTIALS: credentials.txt
+      KAFKA_SSL_TRUSTSTORE_FILENAME: server.truststore
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: credentials.txt
+      KAFKA_SSL_CLIENT_AUTH: required
     volumes:
       - "./plugin:/plugin"
-      - "./cert:/etc/kafka/secrets"
+      - "./cert/server:/etc/kafka/secrets"
     depends_on:
       - opa
       - zookeeper
