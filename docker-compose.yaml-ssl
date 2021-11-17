@@ -14,12 +14,8 @@ services:
     ports:
       - "2181:2181"
     environment:
-      ALLOW_ANONYMOUS_LOGIN: yes
-      ZOOKEEPER_CLIENT_PORT: 2181
-#      ZOOKEEPER_AUTH_PROVIDER_SASL: org.apache.zookeeper.server.auth.SASLAuthenticationProvider
-      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_jaas.conf
-    volumes:
-      - ./zookeeper_jaas.conf:/etc/kafka/secrets/zookeeper_jaas.conf
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
   broker:
     image: confluentinc/cp-kafka:6.2.1
     ports:
@@ -32,8 +28,7 @@ services:
       KAFKA_OPA_AUTHORIZER_CACHE_EXPIRE_AFTER_SECONDS: 10 # For development only
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://localhost:9093
-      KAFKA_LISTENERS: SASL_SSL://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,SSL://localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -45,14 +40,9 @@ services:
       KAFKA_SSL_TRUSTSTORE_FILENAME: server.truststore
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: credentials.txt
       KAFKA_SSL_CLIENT_AUTH: required
-      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
-      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
-      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
-      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf
     volumes:
       - "./plugin:/plugin"
       - "./cert/server:/etc/kafka/secrets"
-      - "./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf"
     depends_on:
       - opa
       - zookeeper
