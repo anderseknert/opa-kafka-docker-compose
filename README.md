@@ -9,11 +9,15 @@ Example code for running Kafka with client certificates for authentication, and 
 3. Run the `create_cert.sh` script to create server and client certificates. These will be found in the `cert` directory.
 4. `docker compose up`
 
-## Querying Kafka
+## SSL Authentication
+1. `cp docker-compose-ssl.yaml docker-compose.yaml`
+2. `docker compose up`
+
+### Querying Kafka
 
 Using the `alice` user with a client certificate.
 
-### Producing to a topic
+#### Producing to a topic
 
 ```shell
 bin/kafka-console-producer.sh --broker-list localhost:9093 --topic test --producer.config path/to/cert/client/alice.properties
@@ -23,7 +27,7 @@ bin/kafka-console-producer.sh --broker-list localhost:9093 --topic test --produc
 Ctrl+c
 ```
 
-### Consuming from a topic
+#### Consuming from a topic
 
 ```shell
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9093 --topic test --consumer.config path/to/cert/client/alice.properties --from-beginning
@@ -33,4 +37,34 @@ My second message
 Ctrl+c
 
 Processed a total of 4 messages
+```
+
+## SASL Authentication
+1. `cp docker-compose-sasl.yaml docker-compose.yaml`
+2. `docker compose up`
+
+### Querying Kafka
+
+Using the `alice` user with SASL credentials.
+
+#### Producing to a topic
+
+```shell
+bin/kafka-console-producer.sh --broker-list localhost:9094 --topic test --producer.config path/to/client_jaas/alice-plain.properties
+> My first message
+> My second message
+...
+Ctrl+c
+```
+
+#### Consuming from a topic
+
+```shell
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9094 --topic test --consumer.config path/to/client_jaas/alice-plain.properties --from-beginning
+My first message
+My second message
+...
+Ctrl+c
+
+Processed a total of 2 messages
 ```
